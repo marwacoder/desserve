@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Usman Jibril Mohammed",
   "license": "MIT",
+  "engines": {
+    "node": "12.16.1"
+  },
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
