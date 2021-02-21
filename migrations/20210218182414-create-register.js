@@ -8,19 +8,53 @@ module.exports = {
         type: Sequelize.STRING
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'please enter your first name'
+          }
+        }
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'please enter your last name'
+          }
+        }
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'please enter email address'
+          },
+          isEmail: {
+            msg: 'please enter a valid email address'
+          }
+        }
       },
       phoneNumber: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: 'please enter your first name'
+          }
+        }
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          is: {
+            args: '/^[0]\d{10}$',
+            msg: 'not a valid phone number'
+          }
+        }
       },
       createdAt: {
         allowNull: false,

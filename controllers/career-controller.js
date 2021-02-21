@@ -1,74 +1,20 @@
 const id = require('shortid');
-const bc = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const {validationResult} = require('express-validator');
-const { Register } = require('../models/');
+const { Career } = require('../models');
 
 
 
-
-const auth = async (req, res) => {
-    const { email, password} = req.body;
-    const user = await Register.findAll({ where: { email: email } });
-
-    try {
-        if (!user) {
-            return await res.status(401).json({
-                msg: 'Invalid username or password',
-                statusCode: 401
-            })
-        }
-        else {
-            bc.compare(password, user[0].password, (err, result) => {
-                if (err) {
-                    return res.status(401).json({
-                        msg: 'Invalid username or password',
-                        statusCode: 401
-                    })
-                }
-                if (result) {
-                    const token = jwt.sign({
-                        email: user[0].email,
-                        password: user[0].password
-                    }, 'secrete',
-                        {
-                            expiresIn: 3600
-                        }
-                    );
-                    return res.status(200).json({
-                        msg: 'success',
-                        user: user,
-                        token: token,
-                        expiresIn: 3600
-                    })
-                }
-                return res.status(401).json({
-                    msg: 'Invalid username or password',
-                    statusCode: 401,
-                })
-
-             })
-        }
-        
-        }
-        catch (error) {
-            if (error) {
-            return res.status(500).json({
-            error: {
-                    msg: 'Server Error' + error,
-                statusCode: 500
-            }
-           }) 
-        }
-        }
-        
-
-}
 
 
 const register = async (req, res) => {
-    const { firstName, lastName, email, phoneNumber, password, confirmPassword } = req.body;
-    const findEmail = await Register.findAll({ where: { email: email } });
+    const {
+        firstName, lastName, age,
+        email, phoneNumber, homeAddress1,
+        homeAddress2, stateOfOrigin,
+        qualification, workExp, interest
+    } = req.body;
+        
+    const findEmail = await Career.findAll({ where: { email: email } });
     const errors = validationResult(req);
         try {
             if (!errors.isEmpty()) {
@@ -81,36 +27,30 @@ const register = async (req, res) => {
                     }
                 })
             }
-        else if (findEmail.length <= 0) {
-            await bc.hash(password, 10, (err, hash) => {
-                if (err) {
-                    return res.status(500).json({
-                    error: {
-                    msg: 'Server Error',
-                    statusCode: 500
-                }
-            })
-                } else {
-        Register.create({
+        if (findEmail.length <= 0) {
+            
+        Career.create({
             id: id(),
            firstName: firstName,
            lastName: lastName,
            email: email,
            phoneNumber: phoneNumber,
-           password: hash
+            age: age,
+            homeAddress1: homeAddress1,
+            homeAddress2: homeAddress2,
+            stateOfOrigin: stateOfOrigin,
+            qualification: qualification,
+            workExp: workExp,
+           interest: interest
        })
             return res.status(201).json({
                 msg: 'success',
                 statusCode: 201
-        })
-                }
-        
-
-             })  
+        })  
             
         }
         
-             else return await res.status(409).json({
+     return await res.status(409).json({
             error: {
                 msg: 'Email already exist',
                 statusCode: 409
@@ -133,11 +73,8 @@ const register = async (req, res) => {
 }
 
 
-
-
-
 const index = async(req, res) => {
-    const getAllRegistered = await Register.findAll();
+    const getAllRegistered = await Career.findAll();
 
     try {
         if (getAllRegistered) {
@@ -164,8 +101,9 @@ const index = async(req, res) => {
 }
 
 const show = async (req, res) => {
+    
     const { id } = req.params;
-    const findById = await Register.findByPk(id);
+    const findById = await Career.findByPk(id);
 
     try {
         
@@ -199,9 +137,9 @@ const show = async (req, res) => {
 
 
 const amend = async (req, res) => {
-    const { id } = req.params;
 
-    const updateById = await Register.findByPk(id);
+    const { id } = req.params;
+    const updateById = await Career.findByPk(id);
     const errors = validationResult(req);
     try {
         if (!errors.isEmpty()) {
@@ -223,7 +161,7 @@ const amend = async (req, res) => {
               }
           })   
         }
-        await Register.update({
+        await Career.update({
           ...req.body
         },{ where: { id: id } }) 
             return await res.status(201).json({
@@ -245,7 +183,7 @@ const amend = async (req, res) => {
 
 const destroy = async(req, res)=>{
     const { id } = req.params;
-    const destroyById = await Register.findByPk(id);
+    const destroyById = await Career.findByPk(id);
 
     try {
         
@@ -257,7 +195,7 @@ const destroy = async(req, res)=>{
               }
           })   
         }
-        await Register.destroy({ where: { id: id } }) 
+        await Career.destroy({ where: { id: id } }) 
             return await res.status(201).json({
                 message: 'success',
                 statusCode: 201
@@ -278,5 +216,4 @@ const destroy = async(req, res)=>{
 
 
 
-
-module.exports = {register,auth, index, show, amend, destroy }
+module.exports = {register, index, show, amend, destroy}

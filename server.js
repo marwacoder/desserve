@@ -8,6 +8,9 @@ const models = require('./models/');
 
 
 
+const registerRoute = require('./routes/register');
+const careerRoute = require('./routes/career');
+
 
 const app = express();
 app.use(cors())
@@ -18,6 +21,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use('/desserve', registerRoute);
+app.use('/desserve', careerRoute);
 
 
 app.use((req, res, next) => {
